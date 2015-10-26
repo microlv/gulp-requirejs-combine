@@ -1,0 +1,24 @@
+{
+  "name": "gulp-requirejs-combine",
+  "version": "0.0.1",
+  "description": "combine all requirejs files into one file.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microlv/gulp-requirejs-combine.git"
+  },
+  "keywords": [
+    "gulp-requirejs",
+    "gulp-require",
+    "requirejs"
+  ],
+  "author": "andy.lv@live.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microlv/gulp-requirejs-combine/issues"
+  },
+  "homepage": "https://github.com/microlv/gulp-requirejs-combine#readme"
+}
