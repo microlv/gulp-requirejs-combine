@@ -15,10 +15,24 @@
     "gulp-require",
     "requirejs"
   ],
-  "author": "andy.lv@live.com",
+  "author": {
+    "name": "andy.lv@live.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/microlv/gulp-requirejs-combine/issues"
   },
-  "homepage": "https://github.com/microlv/gulp-requirejs-combine#readme"
+  "dependencies": {
+    "defaults": "^1.0.3",
+    "mkdirp": "^0.5.1",
+    "path": "^0.12.7",
+    "through2": "^2.0.0"
+  },
+  "homepage": "https://github.com/microlv/gulp-requirejs-combine#readme",
+  "readme": "# gulp-requirejs-combine\r\ncombine requirejs file into one file.\r\n",
+  "readmeFilename": "README.md",
+  "gitHead": "759dc52104762f148a96f812789c46cb1af197fc",
+  "_id": "gulp-requirejs-combine@0.0.1",
+  "_shasum": "a310c9f0bcc3e1902854ed6f64bc8bc873109e77",
+  "_from": "gulp-requirejs-combine@*"
 }
