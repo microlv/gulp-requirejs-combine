@@ -19,40 +19,26 @@ function combine(opt) {
     if (typeof options.mode === 'string') {
         options.mode = parseInt(options.mode, 8);
     }
-
     var cwd = path.resolve(options.cwd);
 
-    var root = opt.root;
-
-    loop(opt.folders);
-
-    function loop(folder) {
-        for (var f in folder) {
-            var val = folder[f];
-            if (isObject(val)) {
-                console.log('deep into folder--->>>' + f);
-                loop(val);
-            } else {
-                console.log('make dir--->>>' + f);
-                // mkdirp the folder the file is going in
-                mkDir(val);
-            }
+    var define = function () {
+        var depend = arguments[0];
+        var i = 0, filepath = '';
+        if (typeof depend === 'function') {
+            depend.toString();
         }
-    }
-
-    function mkDir(dir) {
-        mkdirp(cwd + '\\' + root + '\\' + dir, function (err) {
-            if (err) {
-                console.log(err);
+        else {
+            for (i = 0; i < depend.length; i++) {
+                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(depend[i]));
+                try {
+                    var data = fs.readFileSync(filepath, 'utf-8');
+                    var content = String(data);
+                    dependList.push({file: a[i], content: content, isDone: false});
+                    eval(content);
+                } catch (e) {
+                    console.log(e);
+                }
             }
-            //writeContents(writePath, file, cb);
-        });
-    }
-
-
-    var define = function (a, b, c) {
-        if (typeof a === 'string') {
-
         }
     };
 
@@ -64,8 +50,8 @@ function combine(opt) {
                 try {
                     var data = fs.readFileSync(filepath, 'utf-8');
                     var content = String(data);
-                    //console.log(content);
-                    dependList.push(content);
+                    dependList.push({file: a[i], content: content, isDone: false});
+                    eval(content);
                 } catch (e) {
                     console.log(e);
                 }
