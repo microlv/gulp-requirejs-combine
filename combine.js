@@ -5,6 +5,7 @@ var through2 = require('through2');
 var mkdirp = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
+var _ = require('lodash');
 
 var arrayTag = '[object Array]';
 
@@ -24,44 +25,66 @@ function combine(opt) {
     var define = function () {
         var depend = arguments[0];
         var i = 0, filepath = '';
-        if (typeof depend === 'function') {
+        if (typeof depend === 'function' || depend.length === 0) {
             depend.toString();
         }
         else {
-            for (i = 0; i < depend.length; i++) {
-                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(depend[i]));
+            _.forEach(depend, function (item) {
+                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(item));
                 try {
                     var data = fs.readFileSync(filepath, 'utf-8');
                     var content = String(data);
-                    dependList.push({file: a[i], content: content, isDone: false});
+                    dependList.unshift({file: item, content: content, isDone: false});
                     eval(content);
                 } catch (e) {
                     console.log(e);
                 }
-            }
+            });
         }
     };
 
     var require = function (a, b, c) {
         var i = 0, filepath = '';
         if (Object.prototype.toString.call(a) === arrayTag) {
-            for (i = 0; i < a.length; i++) {
-                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(a[i]));
+            _.forEach(a, function (item) {
+                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(item));
                 try {
                     var data = fs.readFileSync(filepath, 'utf-8');
                     var content = String(data);
-                    dependList.push({file: a[i], content: content, isDone: false});
-                    eval(content);
+                    if (!exist(item)) {
+                        dependList.push({
+                            file: item, content: content, isDone: false, cb: function () {
+
+                            }
+                        });
+                        eval(content);
+                    }
                 } catch (e) {
                     console.log(e);
                 }
-            }
+            });
         }
     };
 
+    function readFile() {
+
+    }
+
+    function exist(name) {
+        var existItem = _.find(dependList, function (i) {
+            return i.file === name;
+        });
+        return !!existItem;
+    }
+
     function mapConfig(name) {
         var file = opt.paths[name];
-        var re = new RegExp('.js', 'gi');
+        //if (!file) {
+        //    file = _.find(opt.paths, function (path) {
+        //        return path === name;
+        //    });
+        //}
+        var re = new RegExp(/\.js/gi);
         if (re.test(file)) {
             return file;
         }

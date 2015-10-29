@@ -1,5 +1,5 @@
 define([
-	"./ajax"
+	"ajax"
 ], function( jQuery ) {
 	console.log('alias');
 });

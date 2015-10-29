@@ -1,5 +1,5 @@
 define([
-    '../core/parseHTML'
+    'parseHTML'
 ], function (jQuery) {
     console.log('ajax');
 });

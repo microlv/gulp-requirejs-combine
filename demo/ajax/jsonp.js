@@ -1,6 +1,6 @@
 define([
-    "./var/nonce",
-    "./var/rquery"
+    "nonce",
+    "rquery"
 ], function (jQuery, nonce, rquery) {
 
     console.log('jsonp');

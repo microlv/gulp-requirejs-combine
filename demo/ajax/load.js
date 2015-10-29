@@ -1,7 +1,7 @@
 define([
-    "../core/parseHTML",
+    "parseHTML",
     // Optional event/alias dependency
-    "../event/alias"
+    "alias"
 ], function (jQuery) {
     console.log('load');
 
