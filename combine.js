@@ -18,7 +18,7 @@ function combine(opt) {
     });
     var cwd = path.resolve(options.cwd);
     var evalName = '';
-
+    var sort = 1;
     if (typeof options.mode === 'string') {
         options.mode = parseInt(options.mode, 8);
     }
@@ -34,20 +34,10 @@ function combine(opt) {
         } else if (typeof f === 'function') {
             closureReplace(f);
         } else {
-
-
+            //save self first.
+            closureReplace(arguments[1]);
             _.forEach(f, function (name) {
-                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
-                try {
-                    var data = fs.readFileSync(filepath, 'utf-8');
-                    var content = String(data);
-                    defineList.push({name: name, content: content, isDone: false, ef: ''});
-                    requireList.push(name);
-                    evalName = name;
-                    eval(content);
-                } catch (e) {
-                    console.log(e);
-                }
+                loadFiles(name);
             });
         }
     };
@@ -57,22 +47,29 @@ function combine(opt) {
         if (Object.prototype.toString.call(a) !== arrayTag) return;
 
         _.forEach(a, function (name) {
-            filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
-            try {
-                var data = fs.readFileSync(filepath, 'utf-8');
-                var content = String(data);
-                if (!exist(name)) {
-                    defineList.push({name: name, content: content, isDone: false, ef: ''});
-                    requireList.push(name);
-                    evalName = name;
-                    eval(content);
-                }
-            } catch (e) {
-                console.log(e);
-            }
+            loadFiles(name);
         });
-
     };
+
+    function loadFiles(name) {
+        var filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
+        try {
+            var data = fs.readFileSync(filepath, 'utf-8');
+            var content = String(data);
+            if (!exist(name)) {
+                defineList.push({name: name, content: content, isDone: false, ef: ''});
+                requireList.push({name: name, sort: sort++});
+                evalName = name;
+                eval(content);
+            } else {
+                //if item is exist, then update it 's sort
+                var item = findItem(name, requireList);
+                item.sort = sort++;
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     function closureReplace(f) {
         //default func
@@ -80,13 +77,16 @@ function combine(opt) {
         if (typeof f === 'function') {
             func = f.toString();
             var item = findItem(evalName);
-            item.ef = '($$func$$)()'.replace('$$func$$', func);
+            item.ef = '($$func$$)();\r'.replace('$$func$$', func);
             item.isDone = true;
         }
     }
 
-    function findItem(name) {
-        return _.find(defineList, function (i) {
+    function findItem(name, arr) {
+        if (!arr) {
+            arr = defineList;
+        }
+        return _.find(arr, function (i) {
             return i.name === name;
         });
     }
@@ -119,18 +119,31 @@ function combine(opt) {
         cb();
     }, function (cb) {
         //last execute
-        cb();
+        var folder = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + 'build');
+        var filepath = path.resolve(folder + '/output.js');
+
+        mkdirp(folder, function (err) {
+            if (err) throw err;
+            //write into file
+            var stringContent = '';
+            var sortList = _.sortBy(requireList, function (i) {
+                return i.sort;
+            });
+            _.forEach(sortList, function (k) {
+                var item = findItem(k.name, defineList);
+                stringContent += item.ef;
+            });
+
+            fs.writeFileSync(filepath, stringContent, {encoding: 'utf8'}, function (err) {
+                if (err) throw err;
+                console.log('save is done,please see: ' + filepath);
+            });
+            cb();
+        });
+
     });
     stream.resume();
     return stream;
-}
-
-
-function isObject(value) {
-    // Avoid a V8 JIT bug in Chrome 19-20.
-    // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-    var type = typeof value;
-    return !!value && (type == 'object' || type == 'function');
 }
 
 module.exports = combine;

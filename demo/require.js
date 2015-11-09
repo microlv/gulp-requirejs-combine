@@ -1,4 +1,4 @@
-require(['xhr', 'jsonp', 'load'], function () {
+require(['xhr', 'alias', 'alias'], function () {
 
     console.log('require run!');
 });
