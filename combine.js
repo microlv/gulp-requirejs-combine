@@ -11,30 +11,39 @@ var arrayTag = '[object Array]';
 
 function combine(opt) {
     opt = opt || {};
-    var dependList = [];
-
+    var defineList = [];
+    var requireList = [];
     var options = defaults(opt, {
         cwd: process.cwd()
     });
+    var cwd = path.resolve(options.cwd);
+    var evalName = '';
 
     if (typeof options.mode === 'string') {
         options.mode = parseInt(options.mode, 8);
     }
-    var cwd = path.resolve(options.cwd);
 
     var define = function () {
-        var depend = arguments[0];
+        var f = arguments[0];
         var i = 0, filepath = '';
-        if (typeof depend === 'function' || depend.length === 0) {
-            depend.toString();
-        }
-        else {
-            _.forEach(depend, function (item) {
-                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(item));
+        var func = '';
+        if (Object.prototype.toString.call(f) === arrayTag && f.length === 0) {
+            f = arguments[1];
+            //f is function(a,b){xxx};
+            closureReplace(f);
+        } else if (typeof f === 'function') {
+            closureReplace(f);
+        } else {
+
+
+            _.forEach(f, function (name) {
+                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
                 try {
                     var data = fs.readFileSync(filepath, 'utf-8');
                     var content = String(data);
-                    dependList.unshift({file: item, content: content, isDone: false});
+                    defineList.push({name: name, content: content, isDone: false, ef: ''});
+                    requireList.push(name);
+                    evalName = name;
                     eval(content);
                 } catch (e) {
                     console.log(e);
@@ -45,36 +54,45 @@ function combine(opt) {
 
     var require = function (a, b, c) {
         var i = 0, filepath = '';
-        if (Object.prototype.toString.call(a) === arrayTag) {
-            _.forEach(a, function (item) {
-                filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(item));
-                try {
-                    var data = fs.readFileSync(filepath, 'utf-8');
-                    var content = String(data);
-                    if (!exist(item)) {
-                        dependList.push({
-                            file: item, content: content, isDone: false, cb: function () {
+        if (Object.prototype.toString.call(a) !== arrayTag) return;
 
-                            }
-                        });
-                        eval(content);
-                    }
-                } catch (e) {
-                    console.log(e);
+        _.forEach(a, function (name) {
+            filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
+            try {
+                var data = fs.readFileSync(filepath, 'utf-8');
+                var content = String(data);
+                if (!exist(name)) {
+                    defineList.push({name: name, content: content, isDone: false, ef: ''});
+                    requireList.push(name);
+                    evalName = name;
+                    eval(content);
                 }
-            });
-        }
+            } catch (e) {
+                console.log(e);
+            }
+        });
+
     };
 
-    function readFile() {
+    function closureReplace(f) {
+        //default func
+        var func = 'function(){}';
+        if (typeof f === 'function') {
+            func = f.toString();
+            var item = findItem(evalName);
+            item.ef = '($$func$$)()'.replace('$$func$$', func);
+            item.isDone = true;
+        }
+    }
 
+    function findItem(name) {
+        return _.find(defineList, function (i) {
+            return i.name === name;
+        });
     }
 
     function exist(name) {
-        var existItem = _.find(dependList, function (i) {
-            return i.file === name;
-        });
-        return !!existItem;
+        return !!findItem(name);
     }
 
     function mapConfig(name) {
