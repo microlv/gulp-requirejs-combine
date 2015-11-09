@@ -42,13 +42,13 @@ function combine(opt) {
         }
     };
 
-    var require = function (a, b, c) {
-        var i = 0, filepath = '';
-        if (Object.prototype.toString.call(a) !== arrayTag) return;
+    var require = function (arr, func) {
+        if (Object.prototype.toString.call(arr) !== arrayTag) return;
 
-        _.forEach(a, function (name) {
+        _.forEach(arr, function (name) {
             loadFiles(name);
         });
+        closureReplace(func);
     };
 
     function loadFiles(name) {
