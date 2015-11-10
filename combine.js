@@ -25,8 +25,6 @@ function combine(opt) {
 
     var define = function () {
         var f = arguments[0];
-        var i = 0, filepath = '';
-        var func = '';
         if (Object.prototype.toString.call(f) === arrayTag && f.length === 0) {
             f = arguments[1];
             //f is function(a,b){xxx};
