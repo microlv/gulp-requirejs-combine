@@ -44,9 +44,10 @@ function combine(opt) {
         if (Object.prototype.toString.call(arr) !== arrayTag) return;
 
         _.forEach(arr, function (name) {
+            sort = 1;
             loadFiles(name);
         });
-        closureReplace(func);
+        //closureReplace(func);
     };
 
     function loadFiles(name) {
@@ -62,7 +63,9 @@ function combine(opt) {
             } else {
                 //if item is exist, then update it 's sort
                 var item = findItem(name, requireList);
-                item.sort = sort++;
+                if (sort >= item.sort) {
+                    item.sort = sort++;
+                }
             }
         } catch (e) {
             console.log(e);
@@ -125,7 +128,7 @@ function combine(opt) {
             //write into file
             var stringContent = '';
             var sortList = _.sortBy(requireList, function (i) {
-                return i.sort;
+                return -i.sort;
             });
             _.forEach(sortList, function (k) {
                 var item = findItem(k.name, defineList);
