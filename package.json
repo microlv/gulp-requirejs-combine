@@ -1,6 +1,6 @@
 {
   "name": "gulp-requirejs-combine",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "combine all requirejs files into one file.",
   "main": "index.js",
   "scripts": {
