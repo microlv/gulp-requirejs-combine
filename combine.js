@@ -47,7 +47,8 @@ function combine(opt) {
             sort = 1;
             loadFiles(name);
         });
-        //closureReplace(func);
+        evalName = '';
+        closureReplace(func);
     };
 
     function loadFiles(name) {
@@ -56,7 +57,7 @@ function combine(opt) {
             var data = fs.readFileSync(filepath, 'utf-8');
             var content = String(data);
             if (!exist(name)) {
-                defineList.push({name: name, content: content, isDone: false, ef: ''});
+                defineList.push({name: name, content: content, ef: ''});
                 requireList.push({name: name, sort: sort++});
                 evalName = name;
                 eval(content);
@@ -76,10 +77,14 @@ function combine(opt) {
         //default func
         var func = 'function(){}';
         if (typeof f === 'function') {
-            func = f.toString();
-            var item = findItem(evalName);
-            item.ef = '($$func$$)();\r'.replace('$$func$$', func);
-            item.isDone = true;
+            func = '($$func$$)();\r'.replace('$$func$$', f.toString());
+            if (evalName) {
+                var item = findItem(evalName);
+                item.ef = func;
+            } else {
+                defineList.push({name: 'mainRequire', content: '', ef: func});
+                requireList.push({name: 'mainRequire', sort: 0});
+            }
         }
     }
 
