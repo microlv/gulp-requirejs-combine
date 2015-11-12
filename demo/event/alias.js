@@ -1,5 +1,5 @@
-define([
-	"ajax"
-], function( jQuery ) {
-	console.log('alias');
+define('alias', [
+    "ajax"
+], function (jQuery) {
+    console.log('alias');
 });

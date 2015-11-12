@@ -11,7 +11,8 @@ var config = {
         alias: 'event/alias',
         nonce: 'ajax/var/nonce',
         rquery: 'ajax/var/rquery'
-    }
+    },
+    useStrict: true
 };
 
 module.exports = config;

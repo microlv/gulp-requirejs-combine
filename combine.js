@@ -11,6 +11,8 @@ var arrayTag = '[object Array]';
 
 function combine(opt) {
     opt = opt || {};
+    var useStrict = opt.useStrict || false;
+
     var defineList = [];
     var requireList = [];
     var options = defaults(opt, {
@@ -24,16 +26,20 @@ function combine(opt) {
     }
 
     var define = function () {
-        var f = arguments[0];
+        var i = 0;
+        var f = arguments[i];
+        if (typeof f === 'string') {
+            f = arguments[++i];
+        }
         if (Object.prototype.toString.call(f) === arrayTag && f.length === 0) {
-            f = arguments[1];
+            f = arguments[++i];
             //f is function(a,b){xxx};
             closureReplace(f);
         } else if (typeof f === 'function') {
             closureReplace(f);
         } else {
             //save self first.
-            closureReplace(arguments[1]);
+            closureReplace(arguments[++i]);
             _.forEach(f, function (name) {
                 loadFiles(name);
             });
@@ -77,7 +83,11 @@ function combine(opt) {
         //default func
         var func = 'function(){}';
         if (typeof f === 'function') {
-            func = '($$func$$)();\r'.replace('$$func$$', f.toString());
+            func = '($$func$$)();//$$name$$\r'
+                .replace('$$func$$', f.toString())
+                .replace('$$name$$', evalName);
+                //.replace('$$useStrict$$', useStrict ? 'useStrict;\r' : '');
+
             if (evalName) {
                 var item = findItem(evalName);
                 item.ef = func;
