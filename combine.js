@@ -8,6 +8,7 @@ var fs = require('fs');
 var _ = require('lodash');
 
 var arrayTag = '[object Array]';
+var toString = Object.prototype.toString;
 
 function combine(opt) {
   opt = opt || {};
@@ -26,12 +27,12 @@ function combine(opt) {
   }
 
   var define = function () {
-    var i = 0;
-    var f = arguments[i];
+    var i = 0, f = arguments[i];
+    //if first argument is name, like define('name',[],function(){});
     if (typeof f === 'string') {
       f = arguments[++i];
     }
-    if (Object.prototype.toString.call(f) === arrayTag && f.length === 0) {
+    if (toString.call(f) === arrayTag && f.length === 0) {
       f = arguments[++i];
       //f is function(a,b){xxx};
       closureReplace(f);
@@ -47,7 +48,7 @@ function combine(opt) {
   };
 
   var require = function (arr, func) {
-    if (Object.prototype.toString.call(arr) !== arrayTag) return;
+    if (toString.call(arr) !== arrayTag) return;
 
     _.forEach(arr, function (name) {
       sort = 1;
@@ -58,16 +59,16 @@ function combine(opt) {
   };
 
   function loadFiles(name) {
-    var filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
+    var data, content, item, filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
     try {
-      var data = fs.readFileSync(filepath, 'utf-8');
-      var content = String(data);
+      data = fs.readFileSync(filepath, 'utf-8');
+      content = String(data);
       if (!exist(name)) {
         defineList.push({name: name, content: content, ef: ''});
         requireList.push({name: name, sort: sort++});
       } else {
         //if item is exist, then update it 's sort
-        var item = findItem(name, requireList);
+        item = findItem(name, requireList);
         if (sort >= item.sort) {
           item.sort = sort++;
         }
@@ -81,24 +82,36 @@ function combine(opt) {
   }
 
   function closureReplace(f) {
-    //default func
-    var func = 'function(){}';
-    if (typeof f === 'function') {
-      func = '($$func$$)();//$$name$$\r'
-        .replace('$$func$$', f.toString())
-        .replace('$$name$$', evalName);
-      //.replace('$$useStrict$$', useStrict ? 'useStrict;\r' : '');
+    if (typeof f !== 'function')return;
 
-      if (evalName) {
-        var item = findItem(evalName);
-        item.ef = func;
-      } else {
-        defineList.push({name: 'mainRequire', content: '', ef: func});
-        requireList.push({name: 'mainRequire', sort: 0});
-      }
+    //default func
+    var func = 'function(){}', main = 'mainRequire', index, start, end, item;
+
+    if (useStrict) {
+      index = f.indexOf('{') + 1;
+      start = f.substring(0, index);
+      end = f.substring(index, f.length);
+      func = start + '\ruse strict;\r' + end;
+    }
+
+    func = '($$func$$)();//$$name$$\r'
+      .replace('$$func$$', f.toString())
+      .replace('$$name$$', evalName || main);
+
+    if (evalName) {
+      item = findItem(evalName);
+      item.ef = func;
+    } else {
+      defineList.push({name: main, content: '', ef: func});
+      requireList.push({name: main, sort: 0});
     }
   }
 
+  /**
+   * find item if it exist in define/require list
+   * @param name
+   * @param arr
+   */
   function findItem(name, arr) {
     if (!arr) {
       arr = defineList;
@@ -108,17 +121,17 @@ function combine(opt) {
     });
   }
 
+  /**
+   * check the item is exist in define/require list
+   * @param name
+   * @returns {boolean}
+   */
   function exist(name) {
     return !!findItem(name);
   }
 
   function mapConfig(name) {
     var file = opt.paths[name];
-    //if (!file) {
-    //    file = _.find(opt.paths, function (path) {
-    //        return path === name;
-    //    });
-    //}
     var re = new RegExp(/\.js/gi);
     if (re.test(file)) {
       return file;
@@ -139,9 +152,11 @@ function combine(opt) {
     var folder = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + 'build');
     var filepath = path.resolve(folder + '/output.js');
 
+    //make dir
     mkdirp(folder, function (err) {
       if (err) throw err;
-      //write into file
+
+      //sort a new list according to the sort, number bigger will output first
       var stringContent = '';
       var sortList = _.sortBy(requireList, function (i) {
         return -i.sort;
@@ -151,6 +166,7 @@ function combine(opt) {
         stringContent += item.ef;
       });
 
+      //write into file
       fs.writeFileSync(filepath, stringContent, {encoding: 'utf8'}, function (err) {
         if (err) throw err;
         console.log('save is done,please see: ' + filepath);

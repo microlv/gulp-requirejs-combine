@@ -1,4 +1,4 @@
 require(['xhr', 'alias', 'ajax'], function () {
 
-    console.log('require run!');
+  console.log('require run!');
 });
