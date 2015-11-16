@@ -35,5 +35,9 @@
   "gitHead": "759dc52104762f148a96f812789c46cb1af197fc",
   "_id": "gulp-requirejs-combine@0.0.1",
   "_shasum": "a310c9f0bcc3e1902854ed6f64bc8bc873109e77",
-  "_from": "gulp-requirejs-combine@*"
+  "_from": "gulp-requirejs-combine@*",
+  "devDependencies": {
+    "del": "^2.1.0",
+    "gulp": "^3.9.0"
+  }
 }

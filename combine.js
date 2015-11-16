@@ -22,9 +22,6 @@ function combine(opt) {
   var cwd = path.resolve(options.cwd);
   var evalName = '';
   var sort = 1;
-  if (typeof options.mode === 'string') {
-    options.mode = parseInt(options.mode, 8);
-  }
 
   var define = function () {
     var i = 0, f = arguments[i];
@@ -59,7 +56,8 @@ function combine(opt) {
   };
 
   function loadFiles(name) {
-    var data, content, item, filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
+    var data, content, item;
+    var filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
@@ -85,19 +83,19 @@ function combine(opt) {
     if (typeof f !== 'function')return;
 
     //default func
-    var func = 'function(){}', main = 'mainRequire', index, start, end, item;
-
-    if (useStrict) {
-      index = f.indexOf('{') + 1;
-      start = f.substring(0, index);
-      end = f.substring(index, f.length);
-      func = start + '\ruse strict;\r' + end;
-    }
+    var func = 'function(){}', main = 'mainRequire';
+    var index, start, end, item;
 
     func = '($$func$$)();//$$name$$\r'
       .replace('$$func$$', f.toString())
       .replace('$$name$$', evalName || main);
 
+    if (useStrict) {
+      index = func.indexOf('{') + 1;
+      start = func.substring(0, index);
+      end = func.substring(index, func.length);
+      func = start + '\ruse strict;\r' + end;
+    }
     if (evalName) {
       item = findItem(evalName);
       item.ef = func;
