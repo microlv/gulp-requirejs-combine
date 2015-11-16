@@ -1,3 +1,3 @@
-define(['ajax'], function (jQuery, support) {
+define('helloxhr', ['ajax'], function (jQuery, support) {
     console.log('xhr');
 });

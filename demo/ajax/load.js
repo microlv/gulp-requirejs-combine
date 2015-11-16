@@ -1,7 +1,9 @@
 define([
     "parseHTML",
     // Optional event/alias dependency
-    "alias"
+    "alias",
+    'ajax',
+    'parseHTML'
 ], function (jQuery) {
     console.log('load');
 
