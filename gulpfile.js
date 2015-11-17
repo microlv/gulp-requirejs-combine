@@ -6,15 +6,15 @@ var combine = require('./combine');
 var config = require('./demo/config');
 
 var paths = {
-    js: ['demo/require.js']
+  js: ['demo/require.js']
 };
 
 gulp.task('clean', function (cb) {
-    del(['build'], cb);
+  del(['build'], cb);
 });
 
-gulp.task('combine', function () {
-    return gulp.src(paths.js)
-        .pipe(combine(config))
-        .pipe(gulp.dest('build/js'));
+gulp.task('default', function () {
+  return gulp.src(paths.js)
+    .pipe(combine(config))
+    .pipe(gulp.dest('build/js'));
 });
