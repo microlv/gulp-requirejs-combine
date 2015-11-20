@@ -161,7 +161,7 @@ function combine(opt) {
       });
       _.forEach(sortList, function (k) {
         var item = findItem(k.name, defineList);
-        stringContent += item.ef;
+        stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
       });
 
       //write into file
