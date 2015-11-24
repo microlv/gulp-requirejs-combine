@@ -19,3 +19,17 @@ gulp.task('default', function () {
     .pipe(gulp.dest('build/js'));
 });
 
+gulp.task('test:base', function () {
+  return gulp.src('test/base/require.js')
+    .pipe(combine({
+      baseUrl: './test/base',
+      paths: {
+        jsonp: 'ajax/jsonp',
+        load: 'ajax/load',
+        xhr: 'ajax/xhr',
+        nonce: 'ajax/var/nonce',
+        rquery: 'ajax/var/rquery'
+      }
+    }))
+    .pipe(gulp.dest('build/js'));
+});

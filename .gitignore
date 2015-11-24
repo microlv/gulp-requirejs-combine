@@ -31,3 +31,5 @@ demo/build
 
 *~
 .DS_Store
+
+output.js

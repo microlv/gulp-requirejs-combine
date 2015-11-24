@@ -178,6 +178,7 @@ function combine(opt) {
         stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
       });
 
+      console.log(filepath);
       //write into file
       fs.writeFileSync(filepath, stringContent, {encoding: 'utf8'}, function (err) {
         if (err) throw err;
