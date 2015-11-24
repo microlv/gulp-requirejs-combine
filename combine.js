@@ -16,10 +16,9 @@ function combine(opt) {
 
   var defineList = [];
   var requireList = [];
-  var options = defaults(opt, {
-    cwd: process.cwd()
-  });
-  var cwd = path.resolve(options.cwd);
+
+  var cwd = '';
+
   var evalName = '';
   var sort = 1;
 
@@ -57,7 +56,7 @@ function combine(opt) {
 
   function loadFiles(name) {
     var data, content, item;
-    var filepath = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + mapConfig(name));
+    var filepath = path.resolve(getEnv() + mapConfig(name));
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
@@ -137,7 +136,22 @@ function combine(opt) {
     return file + '.js';
   }
 
+  function getEnv() {
+//    var options = defaults(opt, {
+//      cwd: process.cwd()
+//    });
+//    var cwd = path.resolve(options.cwd);
+
+    var baseUrl = cwd + '/' + opt.baseUrl + '/';
+    if (process.platform !== 'darwin') {
+      baseUrl = cwd + '\\' + opt.baseUrl + '\\'
+    }
+    return baseUrl;
+  }
+
   var stream = through2.obj(function (file, enc, cb) {
+
+    cwd = file.cwd;
     //every file will go into this
     //file.contents = new Buffer(String(file.contents).replace(search, replacement));
     var content = String(file.contents);
@@ -147,7 +161,7 @@ function combine(opt) {
     cb();
   }, function (cb) {
     //last execute
-    var folder = path.resolve(cwd + '\\' + opt.baseUrl + '\\' + 'build');
+    var folder = path.resolve(getEnv() + 'build');
     var filepath = path.resolve(folder + '/output.js');
 
     //make dir

@@ -1,12 +1,12 @@
-(function (jQuery, rsingleTag) {
+(function (jQuery, rsingleTag) {use strict;
     console.log('parseHTML');
-})();//parseHTML(function (jQuery) {
+})();//parseHTML(function (jQuery) {use strict;
     console.log('ajax');
-})();//ajax(function (jQuery, support) {
-    console.log('xhr');
-})();//xhr(function (jQuery) {
+})();//ajax(function (jQuery) {use strict;
     console.log('alias');
-})();//alias(function () {
+})();//alias(function (jQuery, support) {use strict;
+    console.log('xhr');
+})();//xhr(function () {use strict;
 
-    console.log('require run!');
-})();//
+  console.log('require run!');
+})();//mainRequire
