@@ -47,7 +47,8 @@ gulp.task('test:complicate', function () {
         nonce: 'ajax/var/nonce',
         rquery: 'ajax/var/rquery'
       },
-      useStrict: true
+      useStrict: true,
+      output: 'buildOut.js'
     }))
     .pipe(gulp.dest('test/complicate/build'));
 });
