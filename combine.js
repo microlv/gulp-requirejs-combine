@@ -95,7 +95,7 @@ function combine(opt) {
       index = func.indexOf('{') + 1;
       start = func.substring(0, index);
       end = func.substring(index, func.length);
-      func = start + '\ruse strict;\r' + end;
+      func = start + '\r\'use strict\';\r' + end;
     }
     if (evalName) {
       item = findItem(evalName);
@@ -139,9 +139,6 @@ function combine(opt) {
   }
 
   function createFile(file) {
-//    var folder = __dirname + path.resolve(getEnv() + 'build')+'/';
-
-    console.log(__dirname);
     return new gutil.File({
       cwd: __dirname,
       base: __dirname,
@@ -158,7 +155,6 @@ function combine(opt) {
   }
 
   return through2.obj(function (file, enc, cb) {
-
     cwd = file.cwd;
     //every file will go into this
     //file.contents = new Buffer(String(file.contents).replace(search, replacement));
@@ -169,16 +165,6 @@ function combine(opt) {
     cb();
   }, function (cb) {
     //last execute
-//    var folder = path.resolve(getEnv() + 'build');
-//    var filepath = path.resolve(folder + '/output.js');
-//    var that = this;
-
-//    //make dir
-//    mkdirp(folder, function (err) {
-//      if (err) throw err;
-//      cb();
-//    });
-
     //sort a new list according to the sort, number bigger will output first
     var stringContent = '';
     var sortList = _.sortBy(requireList, function (i) {
@@ -189,19 +175,10 @@ function combine(opt) {
       stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
-//    console.log(filepath);
-//    //write into file
-//    fs.writeFileSync(filepath, '', {encoding: 'utf8'}, function (err) {
-//      if (err) throw err;
-//      console.log('save is done,please see: ' + filepath);
-//    });
-
-
-    console.log(stringContent);
     jsFile.contents = new Buffer(stringContent);
     this.push(jsFile);
     this.push(null);
-//    cb();
+    cb();
   });
 }
 
