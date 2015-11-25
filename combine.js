@@ -6,6 +6,7 @@ var mkdirp = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
+var gutil = require('gulp-util');
 
 var arrayTag = '[object Array]';
 var toString = Object.prototype.toString;
@@ -13,7 +14,7 @@ var toString = Object.prototype.toString;
 function combine(opt) {
   opt = opt || {};
   var useStrict = opt.useStrict || false;
-
+  var output = opt.output || 'output.js';
   var defineList = [];
   var requireList = [];
 
@@ -21,6 +22,7 @@ function combine(opt) {
 
   var evalName = '';
   var sort = 1;
+  var jsFile = createFile(output);
 
   var define = function () {
     var i = 0, f = arguments[i];
@@ -136,12 +138,18 @@ function combine(opt) {
     return file + '.js';
   }
 
-  function getEnv() {
-//    var options = defaults(opt, {
-//      cwd: process.cwd()
-//    });
-//    var cwd = path.resolve(options.cwd);
+  function createFile(file) {
+//    var folder = __dirname + path.resolve(getEnv() + 'build')+'/';
 
+    console.log(__dirname);
+    return new gutil.File({
+      cwd: __dirname,
+      base: __dirname,
+      path: path.join(__dirname, file)
+    });
+  }
+
+  function getEnv() {
     var baseUrl = cwd + '/' + opt.baseUrl + '/';
     if (process.platform !== 'darwin') {
       baseUrl = cwd + '\\' + opt.baseUrl + '\\'
@@ -149,7 +157,7 @@ function combine(opt) {
     return baseUrl;
   }
 
-  var stream = through2.obj(function (file, enc, cb) {
+  return through2.obj(function (file, enc, cb) {
 
     cwd = file.cwd;
     //every file will go into this
@@ -161,15 +169,14 @@ function combine(opt) {
     cb();
   }, function (cb) {
     //last execute
-    var folder = path.resolve(getEnv() + 'build');
-    var filepath = path.resolve(folder + '/output.js');
+//    var folder = path.resolve(getEnv() + 'build');
+//    var filepath = path.resolve(folder + '/output.js');
 //    var that = this;
 
-    //make dir
+//    //make dir
 //    mkdirp(folder, function (err) {
 //      if (err) throw err;
-//
-//
+//      cb();
 //    });
 
     //sort a new list according to the sort, number bigger will output first
@@ -182,19 +189,20 @@ function combine(opt) {
       stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
-    console.log(filepath);
-    //write into file
-//      fs.writeFileSync(filepath, stringContent, {encoding: 'utf8'}, function (err) {
-//        if (err) throw err;
-//        console.log('save is done,please see: ' + filepath);
-//      });
+//    console.log(filepath);
+//    //write into file
+//    fs.writeFileSync(filepath, '', {encoding: 'utf8'}, function (err) {
+//      if (err) throw err;
+//      console.log('save is done,please see: ' + filepath);
+//    });
 
-    this.push(new Buffer(stringContent));
+
+    console.log(stringContent);
+    jsFile.contents = new Buffer(stringContent);
+    this.push(jsFile);
     this.push(null);
-    cb();
-
+//    cb();
   });
-  return stream;
 }
 
 module.exports = combine;

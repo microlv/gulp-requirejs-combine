@@ -30,12 +30,12 @@ gulp.task('test:base', function () {
         rquery: 'var/rquery'
       }
     }))
-    .pipe(gulp.dest('./build/out.js'));
+    .pipe(gulp.dest('build'));
 });
 
-var config = require('./test/browerify/config');
-gulp.task('test:browerify', function () {
-  return gulp.src('test/browerify/require.js')
-    .pipe(combine(config))
-    .pipe(gulp.dest('build/js'));
-});
+//var config = require('./test/browerify/config');
+//gulp.task('test:browerify', function () {
+//  return gulp.src('test/browerify/require.js')
+//    .pipe(combine(config))
+//    .pipe(gulp.dest('build/js'));
+//});

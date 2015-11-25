@@ -28,8 +28,5 @@ node_modules
 demo/build
 .idea
 .vscode
-
-*~
 .DS_Store
-
-output.js
+build
