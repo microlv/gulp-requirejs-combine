@@ -18,8 +18,6 @@ function combine(opt) {
   var defineList = [];
   var requireList = [];
 
-  var cwd = '';
-
   var evalName = '';
   var sort = 1;
   var jsFile = createFile(output);
@@ -147,15 +145,15 @@ function combine(opt) {
   }
 
   function getEnv() {
-    var baseUrl = cwd + '/' + opt.baseUrl + '/';
+    var baseUrl = __dirname + '/' + opt.baseUrl + '/';
     if (process.platform !== 'darwin') {
-      baseUrl = cwd + '\\' + opt.baseUrl + '\\'
+      baseUrl = __dirname + '\\' + opt.baseUrl + '\\'
     }
     return baseUrl;
   }
 
   return through2.obj(function (file, enc, cb) {
-    cwd = file.cwd;
+    //cwd = file.cwd;
     //every file will go into this
     //file.contents = new Buffer(String(file.contents).replace(search, replacement));
     var content = String(file.contents);
