@@ -1,5 +1,6 @@
 # gulp-requirejs-combine
 ====
+
 combine requirejs file into one file. purpose is reduce http request.
 
 ## Install
@@ -18,11 +19,11 @@ move config part into your gulpfile
 
 ```js
 require.config({
-    baseUrl: 'js/lib',
-    paths: {
-        jquery: 'jquery-1.9.0',
-        react: 'react'
-    }
+  baseUrl: 'js/lib',
+  paths: {
+    jquery: 'jquery-1.9.0',
+    react: 'react'
+  }
 });
 ```
 
@@ -34,15 +35,15 @@ var gulp = require('gulp');
 var del = require('del');
 var combine = require('gulp-requirejs-combine');
 var config = {
-                 baseUrl: 'js/lib',
-                 paths: {
-                     jquery: 'jquery-1.9.0',
-                     react: 'react'
-                 }
-             };
+  baseUrl: 'js/lib',
+  paths: {
+    jquery: 'jquery-1.9.0',
+    react: 'react'
+  }
+};
 
 var paths = {
-    js: ['demo/require.js']
+  js: ['demo/require.js']
 };
 
 gulp.task('clean', function (cb) {
@@ -71,10 +72,10 @@ config is base on your gulpfile path. your need to config it base your gulpfile 
 
 ```js
 var config={
-      baseUrl: './test/base',
-      paths: {...
-      }
-    }
+  baseUrl: './test/base',
+  paths: {...
+  }
+}
 ```
 
 ## Problem
