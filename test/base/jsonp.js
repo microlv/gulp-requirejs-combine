@@ -1,4 +1,4 @@
-define(['nonce', 'requery'], function (jQuery, nonce, rquery) {
+define(['nonce', 'rquery'], function (jQuery, nonce, rquery) {
 
   console.log('jsonp');
 });

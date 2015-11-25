@@ -24,11 +24,11 @@ gulp.task('test:base', function () {
     .pipe(combine({
       baseUrl: './test/base',
       paths: {
-        jsonp: 'ajax/jsonp',
-        load: 'ajax/load',
-        xhr: 'ajax/xhr',
-        nonce: 'ajax/var/nonce',
-        rquery: 'ajax/var/rquery'
+        jsonp: 'jsonp',
+        load: 'load',
+        xhr: 'xhr',
+        nonce: 'var/nonce',
+        rquery: 'var/rquery'
       }
     }))
     .pipe(gulp.dest('build/js'));

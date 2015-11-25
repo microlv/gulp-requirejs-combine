@@ -184,6 +184,9 @@ function combine(opt) {
         if (err) throw err;
         console.log('save is done,please see: ' + filepath);
       });
+
+//      this.push(stringContent);
+//      this.push(null);
       cb();
     });
 
