@@ -163,35 +163,37 @@ function combine(opt) {
     //last execute
     var folder = path.resolve(getEnv() + 'build');
     var filepath = path.resolve(folder + '/output.js');
+//    var that = this;
 
     //make dir
-    mkdirp(folder, function (err) {
-      if (err) throw err;
+//    mkdirp(folder, function (err) {
+//      if (err) throw err;
+//
+//
+//    });
 
-      //sort a new list according to the sort, number bigger will output first
-      var stringContent = '';
-      var sortList = _.sortBy(requireList, function (i) {
-        return -i.sort;
-      });
-      _.forEach(sortList, function (k) {
-        var item = findItem(k.name, defineList);
-        stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
-      });
-
-      console.log(filepath);
-      //write into file
-      fs.writeFileSync(filepath, stringContent, {encoding: 'utf8'}, function (err) {
-        if (err) throw err;
-        console.log('save is done,please see: ' + filepath);
-      });
-
-//      this.push(stringContent);
-//      this.push(null);
-      cb();
+    //sort a new list according to the sort, number bigger will output first
+    var stringContent = '';
+    var sortList = _.sortBy(requireList, function (i) {
+      return -i.sort;
+    });
+    _.forEach(sortList, function (k) {
+      var item = findItem(k.name, defineList);
+      stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
+    console.log(filepath);
+    //write into file
+//      fs.writeFileSync(filepath, stringContent, {encoding: 'utf8'}, function (err) {
+//        if (err) throw err;
+//        console.log('save is done,please see: ' + filepath);
+//      });
+
+    this.push(new Buffer(stringContent));
+    this.push(null);
+    cb();
+
   });
-  stream.resume();
   return stream;
 }
 

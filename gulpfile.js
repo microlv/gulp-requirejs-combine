@@ -3,7 +3,6 @@
 var gulp = require('gulp');
 var del = require('del');
 var combine = require('./combine');
-var config = require('./demo/config');
 
 var paths = {
   js: ['demo/require.js']
@@ -31,5 +30,12 @@ gulp.task('test:base', function () {
         rquery: 'var/rquery'
       }
     }))
+    .pipe(gulp.dest('./build/out.js'));
+});
+
+var config = require('./test/browerify/config');
+gulp.task('test:browerify', function () {
+  return gulp.src('test/browerify/require.js')
+    .pipe(combine(config))
     .pipe(gulp.dest('build/js'));
 });
