@@ -18,8 +18,8 @@ function findItem(name, arr) {
  * @param name
  * @returns {boolean}
  */
-function exist(name) {
-  return !!findItem(name);
+function exist(name, arr) {
+  return !!findItem(name, arr);
 }
 
 module.exports = {

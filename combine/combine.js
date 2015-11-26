@@ -1,8 +1,6 @@
 'use strict';
 
-var defaults = require('defaults');
 var through2 = require('through2');
-var mkdirp = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
@@ -17,6 +15,7 @@ function combine(opt) {
   var useStrict = opt.useStrict || false;
   var output = opt.output || 'output.js';
   var newLine = opt.newLine || false;
+  var debug = opt.debug || false;
   var defineList = [];
   var requireList = [];
 
@@ -62,7 +61,7 @@ function combine(opt) {
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
-      if (!utils.exist(name)) {
+      if (!utils.exist(name, defineList)) {
         defineList.push({name: name, content: content, ef: ''});
         requireList.push({name: name, sort: sort++});
       } else {
@@ -87,9 +86,9 @@ function combine(opt) {
     var func = 'function(){}', main = 'mainRequire';
     var index, start, end, item;
 
-    func = '($$func$$)();//$$name$$\r'
+    func = '($$func$$)();$$name$$\r'
       .replace('$$func$$', f.toString())
-      .replace('$$name$$', evalName || main);
+      .replace('$$name$$', !debug ? ('//' + ( evalName || main)) : '');//if not debug ,replace to ''
 
     if (useStrict) {
       index = func.indexOf('{') + 1;
@@ -124,9 +123,9 @@ function combine(opt) {
   }
 
   function getEnv() {
-    var baseUrl = __dirname + '/' + opt.baseUrl + '/';
+    var baseUrl = __dirname + '/../' + opt.baseUrl + '/';
     if (process.platform !== 'darwin') {
-      baseUrl = __dirname + '\\' + opt.baseUrl + '\\'
+      baseUrl = __dirname + '\\..\\' + opt.baseUrl + '\\'
     }
     return baseUrl;
   }

@@ -48,7 +48,8 @@ gulp.task('test:complicate', function () {
         rquery: 'ajax/var/rquery'
       },
       useStrict: true,
-      output: 'buildOut.js'
+      output: 'buildOut.js',
+      debug: true
     }))
     .pipe(gulp.dest('test/complicate/build'));
 });
