@@ -1,12 +1,11 @@
 'use strict';
 
-var defaults = require('defaults');
 var through2 = require('through2');
-var mkdirp = require('mkdirp');
 var path = require('path');
 var fs = require('fs');
 var _ = require('lodash');
 var gutil = require('gulp-util');
+var utils = require('./utils');
 
 var arrayTag = '[object Array]';
 var toString = Object.prototype.toString;
@@ -15,6 +14,8 @@ function combine(opt) {
   opt = opt || {};
   var useStrict = opt.useStrict || false;
   var output = opt.output || 'output.js';
+  var newLine = opt.newLine || false;
+  var debug = opt.debug || false;
   var defineList = [];
   var requireList = [];
 
@@ -60,12 +61,12 @@ function combine(opt) {
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
-      if (!exist(name)) {
+      if (!utils.exist(name, defineList)) {
         defineList.push({name: name, content: content, ef: ''});
         requireList.push({name: name, sort: sort++});
       } else {
         //if item is exist, then update it 's sort
-        item = findItem(name, requireList);
+        item = utils.findItem(name, requireList);
         if (sort >= item.sort) {
           item.sort = sort++;
         }
@@ -85,9 +86,9 @@ function combine(opt) {
     var func = 'function(){}', main = 'mainRequire';
     var index, start, end, item;
 
-    func = '($$func$$)();//$$name$$\r'
+    func = '($$func$$)();$$name$$\r'
       .replace('$$func$$', f.toString())
-      .replace('$$name$$', evalName || main);
+      .replace('$$name$$', !debug ? ('//' + ( evalName || main)) : '');//if not debug ,replace to ''
 
     if (useStrict) {
       index = func.indexOf('{') + 1;
@@ -96,35 +97,12 @@ function combine(opt) {
       func = start + '\r\'use strict\';\r' + end;
     }
     if (evalName) {
-      item = findItem(evalName);
+      item = utils.findItem(evalName, defineList);
       item.ef = func;
     } else {
       defineList.push({name: main, content: '', ef: func});
       requireList.push({name: main, sort: 0});
     }
-  }
-
-  /**
-   * find item if it exist in define/require list
-   * @param name
-   * @param arr
-   */
-  function findItem(name, arr) {
-    if (!arr) {
-      arr = defineList;
-    }
-    return _.find(arr, function (i) {
-      return i.name === name;
-    });
-  }
-
-  /**
-   * check the item is exist in define/require list
-   * @param name
-   * @returns {boolean}
-   */
-  function exist(name) {
-    return !!findItem(name);
   }
 
   function mapConfig(name) {
@@ -145,9 +123,9 @@ function combine(opt) {
   }
 
   function getEnv() {
-    var baseUrl = __dirname + '/' + opt.baseUrl + '/';
+    var baseUrl = __dirname + '/../' + opt.baseUrl + '/';
     if (process.platform !== 'darwin') {
-      baseUrl = __dirname + '\\' + opt.baseUrl + '\\'
+      baseUrl = __dirname + '\\..\\' + opt.baseUrl + '\\'
     }
     return baseUrl;
   }
@@ -169,7 +147,7 @@ function combine(opt) {
       return -i.sort;
     });
     _.forEach(sortList, function (k) {
-      var item = findItem(k.name, defineList);
+      var item = utils.findItem(k.name, defineList);
       stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
