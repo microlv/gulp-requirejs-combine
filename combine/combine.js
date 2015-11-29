@@ -130,8 +130,16 @@ function combine(opt) {
     return baseUrl;
   }
 
+
   return through2.obj(function (file, enc, cb) {
-    //cwd = file.cwd;
+
+    if (file.isNull()) {
+      return cb(null, file);
+    }
+
+    if (file.isStream()) {
+      return cb(createError(file, 'Streaming not supported'));
+    }
     //every file will go into this
     //file.contents = new Buffer(String(file.contents).replace(search, replacement));
     var content = String(file.contents);
@@ -139,6 +147,31 @@ function combine(opt) {
     eval(content);
 
     cb();
+
+
+    var originalContents = String(file.contents);
+
+    var mangled = trycatch(function () {
+      var m = uglify.minify(String(file.contents), options);
+      m.code = new Buffer(m.code.replace(reSourceMapComment, ''));
+      return m;
+    }, createError.bind(null, file));
+
+    if (mangled instanceof PluginError) {
+      return callback(mangled);
+    }
+
+    file.contents = mangled.code;
+
+    if (file.sourceMap) {
+      var sourceMap = JSON.parse(mangled.map);
+      sourceMap.sources = [file.relative];
+      sourceMap.sourcesContent = [originalContents];
+      applySourceMap(file, sourceMap);
+    }
+
+    callback(null, file);
+
   }, function (cb) {
     //last execute
     //sort a new list according to the sort, number bigger will output first
@@ -154,7 +187,7 @@ function combine(opt) {
     jsFile.contents = new Buffer(stringContent);
     this.push(jsFile);
     this.push(null);
-    cb();
+    cb(null, jsFile);
   });
 }
 

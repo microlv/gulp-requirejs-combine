@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var del = require('del');
 var combine = require('./combine');
+var uglify = require('gulp-uglify');
 
 var paths = {
   js: ['demo/require.js']
@@ -30,6 +31,7 @@ gulp.task('test:base', function () {
         rquery: 'var/rquery'
       }
     }))
+    .pipe(uglify())
     .pipe(gulp.dest('test/base/build'));
 });
 

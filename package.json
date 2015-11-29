@@ -39,6 +39,7 @@
   "_from": "gulp-requirejs-combine@*",
   "devDependencies": {
     "del": "^2.1.0",
-    "gulp": "^3.9.0"
+    "gulp": "^3.9.0",
+    "gulp-uglify": "^1.5.1"
   }
 }
