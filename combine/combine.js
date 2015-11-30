@@ -130,6 +130,13 @@ function combine(opt) {
     return baseUrl;
   }
 
+  function clear() {
+    defineList = [];
+    requireList = [];
+    evalName = '';
+    sort = 1;
+    jsFile = createFile(output);
+  }
 
   function combinejs(file, enc, cb) {
     if (file.isNull()) {
@@ -139,6 +146,9 @@ function combine(opt) {
     if (file.isStream()) {
       return cb(createError(file, 'Streaming not supported'));
     }
+    //clear all parpare for next file.
+    clear();
+
     //every file will go into this
     //file.contents = new Buffer(String(file.contents).replace(search, replacement));
     var content = String(file.contents);
