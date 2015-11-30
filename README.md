@@ -1,6 +1,4 @@
 # gulp-requirejs-combine
-====
-
 combine requirejs file into one file. purpose is reduce http request.
 
 ## Install
@@ -11,7 +9,6 @@ Install with [npm](https://npmjs.org/package/gulp-requirejs-combine)
 npm install --save-dev gulp-requirejs-combine
 ```
 
-
 ## DEMO
 ### 1.find out your config in requirejs
 
@@ -19,17 +16,33 @@ move config part into your gulpfile
 
 ```js
 require.config({
-  baseUrl: 'js/lib',
+  baseUrl: './test/base',
   paths: {
-    jquery: 'jquery-1.9.0',
-    react: 'react'
+    jsonp: 'jsonp',
+    load: 'load',
+    xhr: 'xhr',
+    nonce: 'var/nonce',
+    rquery: 'var/rquery'
   }
 });
+```
+==>>
+```js
+combine({
+  baseUrl: './test/base',
+  paths: {
+    jsonp: 'jsonp',
+    load: 'load',
+    xhr: 'xhr',
+    nonce: 'var/nonce',
+    rquery: 'var/rquery'
+  }
+})
 ```
 
 ### 2.use in gulp
 
-more demo please see gulpfile
++ base use
 ```js
 var gulp = require('gulp');
 var del = require('del');
@@ -66,7 +79,27 @@ gulp.task('test:base', function () {
 });
 ```
 
-### 3.becareful about config
++ uglify
+```js
+gulp.task('default', function () {
+  return gulp.src(paths.js)
+    .pipe(combine({
+      baseUrl: './test/base',
+      paths: {
+        jsonp: 'jsonp',
+        load: 'load',
+        xhr: 'xhr',
+        nonce: 'var/nonce',
+        rquery: 'var/rquery'
+      }
+    }))
+    .pipe(uglify())
+    .pipe(gulp.dest('test/base/build'));
+});
+```
++ more demo please see gulpfile
+
+### 3.be careful about config
 
 config is base on your gulpfile path. your need to config it base your gulpfile location.
 
@@ -78,9 +111,20 @@ var config={
 }
 ```
 
+### 4.run demo
++ install dependencies
+```js
+npm install gulp -g
+npm install 
+```
++ run demo
+```js
+gulp test:base
+```
+
 ## Problem
 
-you are welcome to contribute
+You are welcome to contribute
 
-and problem you can task issue or contact me :andy.lv@live.com
+Any problem you can task issue or contact me :andy.lv@live.com
 

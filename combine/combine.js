@@ -86,9 +86,9 @@ function combine(opt) {
     var func = 'function(){}', main = 'mainRequire';
     var index, start, end, item;
 
-    func = '($$func$$)();$$name$$\r'
+    func = '($$func$$)();'
       .replace('$$func$$', f.toString())
-      .replace('$$name$$', !debug ? ('//' + ( evalName || main)) : '');//if not debug ,replace to ''
+      .replace('$$name$$', !debug ? ('\r//' + ( evalName || main) + '\r') : '');//if not debug ,replace to ''
 
     if (useStrict) {
       index = func.indexOf('{') + 1;
@@ -132,7 +132,6 @@ function combine(opt) {
 
 
   function combinejs(file, enc, cb) {
-
     if (file.isNull()) {
       return cb(null, file);
     }
@@ -146,29 +145,6 @@ function combine(opt) {
     //this just use for dev
     eval(content);
 
-//    var originalContents = String(file.contents);
-//
-//    var mangled = trycatch(function () {
-//      var m = uglify.minify(String(file.contents), options);
-//      m.code = new Buffer(m.code.replace(reSourceMapComment, ''));
-//      return m;
-//    }, createError.bind(null, file));
-//
-//    if (mangled instanceof PluginError) {
-//      return callback(mangled);
-//    }
-//
-//    file.contents = mangled.code;
-//
-//    if (file.sourceMap) {
-//      var sourceMap = JSON.parse(mangled.map);
-//      sourceMap.sources = [file.relative];
-//      sourceMap.sourcesContent = [originalContents];
-//      applySourceMap(file, sourceMap);
-//    }
-//
-//    callback(null, file);
-
     //last execute
     //sort a new list according to the sort, number bigger will output first
     var stringContent = '';
@@ -180,6 +156,7 @@ function combine(opt) {
       stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
+    console.log(stringContent);
     file.contents = new Buffer(stringContent);
     cb(null, file);
   }

@@ -7,8 +7,8 @@ var uglify = require('gulp-uglify');
 
 var paths = {
   js: [
-//    'demo/require.js',
-    'test/base/require.js'
+    'test/base/require.js',
+    'test/complicate/require.js'
   ]
 };
 
@@ -28,9 +28,9 @@ gulp.task('default', function () {
         rquery: 'var/rquery'
       }
     }))
+    .pipe(uglify())
     .pipe(gulp.dest('test/base/build'));
 });
-
 
 gulp.task('test:base', function () {
   return gulp.src(paths.js)
@@ -48,8 +48,24 @@ gulp.task('test:base', function () {
     .pipe(gulp.dest('test/base/build'));
 });
 
+gulp.task('test:uglify', function () {
+  return gulp.src(paths.js)
+    .pipe(combine({
+      baseUrl: './test/base',
+      paths: {
+        jsonp: 'jsonp',
+        load: 'load',
+        xhr: 'xhr',
+        nonce: 'var/nonce',
+        rquery: 'var/rquery'
+      }
+    }))
+    .pipe(uglify())
+    .pipe(gulp.dest('test/base/build'));
+});
+
 gulp.task('test:complicate', function () {
-  return gulp.src('test/complicate/require.js')
+  return gulp.src(paths.js)
     .pipe(combine({
       baseUrl: './test/complicate',
       paths: {
