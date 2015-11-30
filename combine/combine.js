@@ -131,7 +131,7 @@ function combine(opt) {
   }
 
 
-  return through2.obj(function (file, enc, cb) {
+  function combinejs(file, enc, cb) {
 
     if (file.isNull()) {
       return cb(null, file);
@@ -146,33 +146,29 @@ function combine(opt) {
     //this just use for dev
     eval(content);
 
-    cb();
+//    var originalContents = String(file.contents);
+//
+//    var mangled = trycatch(function () {
+//      var m = uglify.minify(String(file.contents), options);
+//      m.code = new Buffer(m.code.replace(reSourceMapComment, ''));
+//      return m;
+//    }, createError.bind(null, file));
+//
+//    if (mangled instanceof PluginError) {
+//      return callback(mangled);
+//    }
+//
+//    file.contents = mangled.code;
+//
+//    if (file.sourceMap) {
+//      var sourceMap = JSON.parse(mangled.map);
+//      sourceMap.sources = [file.relative];
+//      sourceMap.sourcesContent = [originalContents];
+//      applySourceMap(file, sourceMap);
+//    }
+//
+//    callback(null, file);
 
-
-    var originalContents = String(file.contents);
-
-    var mangled = trycatch(function () {
-      var m = uglify.minify(String(file.contents), options);
-      m.code = new Buffer(m.code.replace(reSourceMapComment, ''));
-      return m;
-    }, createError.bind(null, file));
-
-    if (mangled instanceof PluginError) {
-      return callback(mangled);
-    }
-
-    file.contents = mangled.code;
-
-    if (file.sourceMap) {
-      var sourceMap = JSON.parse(mangled.map);
-      sourceMap.sources = [file.relative];
-      sourceMap.sourcesContent = [originalContents];
-      applySourceMap(file, sourceMap);
-    }
-
-    callback(null, file);
-
-  }, function (cb) {
     //last execute
     //sort a new list according to the sort, number bigger will output first
     var stringContent = '';
@@ -184,11 +180,12 @@ function combine(opt) {
       stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
-    jsFile.contents = new Buffer(stringContent);
-    this.push(jsFile);
-    this.push(null);
-    cb(null, jsFile);
-  });
+    file.contents = new Buffer(stringContent);
+    cb(null, file);
+  }
+
+  return through2.obj(combinejs);
+
 }
 
 module.exports = combine;

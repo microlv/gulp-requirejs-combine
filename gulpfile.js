@@ -6,7 +6,10 @@ var combine = require('./combine');
 var uglify = require('gulp-uglify');
 
 var paths = {
-  js: ['demo/require.js']
+  js: [
+//    'demo/require.js',
+    'test/base/require.js'
+  ]
 };
 
 gulp.task('clean', function (cb) {
@@ -15,12 +18,22 @@ gulp.task('clean', function (cb) {
 
 gulp.task('default', function () {
   return gulp.src(paths.js)
-    .pipe(combine(config))
-    .pipe(gulp.dest('build/js'));
+    .pipe(combine({
+      baseUrl: './test/base',
+      paths: {
+        jsonp: 'jsonp',
+        load: 'load',
+        xhr: 'xhr',
+        nonce: 'var/nonce',
+        rquery: 'var/rquery'
+      }
+    }))
+    .pipe(gulp.dest('test/base/build'));
 });
 
+
 gulp.task('test:base', function () {
-  return gulp.src('test/base/require.js')
+  return gulp.src(paths.js)
     .pipe(combine({
       baseUrl: './test/base',
       paths: {
