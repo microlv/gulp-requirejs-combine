@@ -134,15 +134,7 @@ function combine(opt) {
     requireList = [];
     evalName = '';
     sort = 1;
-    jsFile = createFile('output.js');
-
-//    utils.trycatch(function () {
-//      var outputfilestring = output[utils.outPutCountIndex()];
-//      jsFile = createFile(outputfilestring);
-//    }, function (e) {
-//      jsFile = createFile(output[0]);
-//      console.log('out of index;')
-//    });
+    jsFile = createFile(output);
   }
 
   function combinejs(file, enc, cb) {
@@ -157,12 +149,10 @@ function combine(opt) {
     clear();
 
     //every file will go into this
-    //file.contents = new Buffer(String(file.contents).replace(search, replacement));
     var content = String(file.contents);
-    //this just use for dev
+    //try to run requrie('a','b',function(){});
     eval(content);
 
-    //last execute
     //sort a new list according to the sort, number bigger will output first
     var stringContent = '';
     var sortList = _.sortBy(requireList, function (i) {
@@ -179,7 +169,6 @@ function combine(opt) {
   }
 
   return through2.obj(combinejs);
-
 }
 
 module.exports = combine;
