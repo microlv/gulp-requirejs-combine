@@ -87,13 +87,13 @@ function combine(opt) {
     func = '($$func$$)();$$name$$'
       .replace('$$func$$', f.toString())
       //if not debug ,replace to ''
-      .replace('$$name$$', !debug ? ('\r/** ' + ( evalName || main) + ' **/\r') : '');
+      .replace('$$name$$', debug ? ('\r/** ' + ( evalName || main) + ' **/\r') : '');
 
     if (useStrict) {
       index = func.indexOf('{') + 1;
       start = func.substring(0, index);
       end = func.substring(index, func.length);
-      func = start + '\r\'use strict\';\r' + end;
+      func = start + '\r  \'use strict\';\r' + end;
     }
     if (evalName) {
       item = utils.findItem(evalName, defineList);

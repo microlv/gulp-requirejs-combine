@@ -59,6 +59,5 @@ gulp.task('test:complicate', function () {
       useStrict: true,
       debug: true
     }))
-    .pipe(uglify())
     .pipe(gulp.dest('test/complicate/build'));
 });
