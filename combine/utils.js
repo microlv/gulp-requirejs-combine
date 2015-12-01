@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-
+var count = 0;
 /**
  * find item if it exist in define/require list
  * @param name
@@ -22,7 +22,25 @@ function exist(name, arr) {
   return !!findItem(name, arr);
 }
 
+function outPutCountIndex() {
+  var res = count;
+  ++count;
+  console.log(res);
+  return res;
+}
+
+function trycatch(exec, cb) {
+  try {
+    exec();
+  }
+  catch (e) {
+    cb(e);
+  }
+}
+
 module.exports = {
   findItem: findItem,
-  exist: exist
+  exist: exist,
+  outPutCountIndex: outPutCountIndex,
+  trycatch: trycatch
 };

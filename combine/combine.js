@@ -14,14 +14,12 @@ function combine(opt) {
   opt = opt || {};
   var useStrict = opt.useStrict || false;
   var output = opt.output || 'output.js';
-  var newLine = opt.newLine || false;
   var debug = opt.debug || false;
   var defineList = [];
   var requireList = [];
-
   var evalName = '';
   var sort = 1;
-  var jsFile = createFile(output);
+  var jsFile = '';
 
   var define = function () {
     var i = 0, f = arguments[i];
@@ -86,9 +84,10 @@ function combine(opt) {
     var func = 'function(){}', main = 'mainRequire';
     var index, start, end, item;
 
-    func = '($$func$$)();'
+    func = '($$func$$)();$$name$$'
       .replace('$$func$$', f.toString())
-      .replace('$$name$$', !debug ? ('\r//' + ( evalName || main) + '\r') : '');//if not debug ,replace to ''
+      //if not debug ,replace to ''
+      .replace('$$name$$', !debug ? ('\r/** ' + ( evalName || main) + ' **/\r') : '');
 
     if (useStrict) {
       index = func.indexOf('{') + 1;
@@ -135,7 +134,15 @@ function combine(opt) {
     requireList = [];
     evalName = '';
     sort = 1;
-    jsFile = createFile(output);
+    jsFile = createFile('output.js');
+
+//    utils.trycatch(function () {
+//      var outputfilestring = output[utils.outPutCountIndex()];
+//      jsFile = createFile(outputfilestring);
+//    }, function (e) {
+//      jsFile = createFile(output[0]);
+//      console.log('out of index;')
+//    });
   }
 
   function combinejs(file, enc, cb) {
