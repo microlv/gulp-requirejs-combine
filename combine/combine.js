@@ -15,6 +15,7 @@ function combine(opt) {
   var useStrict = opt.useStrict || false;
   var output = opt.output || 'output.js';
   var debug = opt.debug || false;
+  var browerify = opt.browerify || false;
   var defineList = [];
   var requireList = [];
   var evalName = '';
@@ -55,7 +56,7 @@ function combine(opt) {
 
   function loadFiles(name) {
     var data, content, item;
-    var filepath = path.resolve(getEnv() + mapConfig(name));
+    var filepath = path.resolve(getEnv(name));
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
@@ -104,15 +105,6 @@ function combine(opt) {
     }
   }
 
-  function mapConfig(name) {
-    var file = opt.paths[name];
-    var re = new RegExp(/\.js/gi);
-    if (re.test(file)) {
-      return file;
-    }
-    return file + '.js';
-  }
-
   function createFile(file) {
     return new gutil.File({
       cwd: __dirname,
@@ -121,12 +113,18 @@ function combine(opt) {
     });
   }
 
-  function getEnv() {
+  function getEnv(name) {
     var baseUrl = __dirname + '/../' + opt.baseUrl + '/';
+    //TODO:wait test in win platform
     if (process.platform !== 'darwin') {
-      baseUrl = __dirname + '\\..\\' + opt.baseUrl + '\\'
+      baseUrl = __dirname + '\\..\\' + opt.baseUrl + '\\';
     }
-    return baseUrl;
+    var file = opt.paths[name];
+    var extFile = file;
+    if (!(/\.js/gi.test(file))) {
+      extFile = file + '.js';
+    }
+    return baseUrl + extFile;
   }
 
   function clear() {
