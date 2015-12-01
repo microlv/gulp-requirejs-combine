@@ -56,7 +56,7 @@ function combine(opt) {
 
   function loadFiles(name) {
     var data, content, item;
-    var filepath = path.resolve(getEnv());
+    var filepath = path.resolve(getEnv(name));
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
@@ -105,10 +105,6 @@ function combine(opt) {
     }
   }
 
-  function mapConfig(name) {
-
-  }
-
   function createFile(file) {
     return new gutil.File({
       cwd: __dirname,
@@ -124,9 +120,8 @@ function combine(opt) {
       baseUrl = __dirname + '\\..\\' + opt.baseUrl + '\\';
     }
     var file = opt.paths[name];
-    var re = new RegExp(/\.js/gi);
     var extFile = file;
-    if (!re.test(file)) {
+    if (!(/\.js/gi.test(file))) {
       extFile = file + '.js';
     }
     return baseUrl + extFile;
