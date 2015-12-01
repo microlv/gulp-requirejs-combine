@@ -93,11 +93,11 @@ gulp.task('test:uglify', function () {
 
 ### 3.be careful about config
 
-config is base on your gulpfile path. your need to config it base your gulpfile location.
+config is base on your gulpfile path. your need to config it base on your gulpfile location.
 
 ```js
 var config={
-  baseUrl: './test/base',
+  baseUrl: './test/base',//base on where your gulpfile location.
   paths: {...
   }
 }

@@ -62,3 +62,14 @@ gulp.task('test:complicate', function () {
     }))
     .pipe(gulp.dest('test/complicate/build'));
 });
+
+
+gulp.task('test:browerify', function () {
+  return gulp.src(paths.complicatejs)
+    .pipe(combine({
+      browerify: true,
+      useStrict: true,
+      debug: true
+    }))
+    .pipe(gulp.dest('test/complicate/build'));
+});
