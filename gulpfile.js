@@ -29,6 +29,7 @@ var baseConfig = {
     rquery: 'var/rquery'
   }
 };
+
 gulp.task('default', function () {
   return gulp.src(paths.js)
     .pipe(combine(baseConfig))
