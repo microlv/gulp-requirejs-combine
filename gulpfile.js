@@ -71,5 +71,5 @@ gulp.task('test:browerify', function () {
       useStrict: true,
       debug: true
     }))
-    .pipe(gulp.dest('test/complicate/build'));
+    .pipe(gulp.dest('test/browerify/build'));
 });

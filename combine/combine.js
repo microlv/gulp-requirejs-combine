@@ -114,10 +114,14 @@ function combine(opt) {
   }
 
   function getEnv(name) {
-    var baseUrl = __dirname + '/../' + opt.baseUrl + '/';
+    if (browerify) {
+      //TODO:browerify support start.
+    }
+
+    var baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
     //TODO:wait test in win platform
     if (process.platform !== 'darwin') {
-      baseUrl = __dirname + '\\..\\' + opt.baseUrl + '\\';
+      baseUrl = process.cwd() + '\\' + opt.baseUrl + '\\';
     }
     var file = opt.paths[name];
     var extFile = file;
@@ -161,7 +165,6 @@ function combine(opt) {
       stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
-    console.log(stringContent);
     file.contents = new Buffer(stringContent);
     cb(null, file);
   }
