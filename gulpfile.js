@@ -6,13 +6,14 @@ var combine = require('./combine');
 var uglify = require('gulp-uglify');
 
 var paths = {
-  js: [
+  basejs: [
     'test/base/base1.js',
     'test/base/base2.js'
   ],
   complicatejs: [
     'test/complicate/require.js'
-  ]
+  ],
+  browerifyjs: ['test/browerify/browerify.js']
 };
 
 gulp.task('clean', function (cb) {
@@ -31,13 +32,13 @@ var baseConfig = {
 };
 
 gulp.task('default', function () {
-  return gulp.src(paths.js)
+  return gulp.src(paths.basejs)
     .pipe(combine(baseConfig))
     .pipe(gulp.dest('test/base/build'));
 });
 
 gulp.task('test:uglify', function () {
-  return gulp.src(paths.js)
+  return gulp.src(paths.basejs)
     .pipe(combine(baseConfig))
     .pipe(uglify())
     .pipe(gulp.dest('test/base/build'));
@@ -63,9 +64,8 @@ gulp.task('test:complicate', function () {
     .pipe(gulp.dest('test/complicate/build'));
 });
 
-
 gulp.task('test:browerify', function () {
-  return gulp.src(paths.complicatejs)
+  return gulp.src(paths.browerifyjs)
     .pipe(combine({
       browerify: true,
       useStrict: true,

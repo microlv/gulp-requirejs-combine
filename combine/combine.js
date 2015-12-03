@@ -9,6 +9,7 @@ var utils = require('./utils');
 
 var arrayTag = '[object Array]';
 var toString = Object.prototype.toString;
+var fileBase = '';
 
 function combine(opt) {
   opt = opt || {};
@@ -56,7 +57,7 @@ function combine(opt) {
 
   function loadFiles(name) {
     var data, content, item;
-    var filepath = path.resolve(getEnv(name));
+    var filepath = path.resolve(getFileUrl(name));
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
@@ -113,22 +114,34 @@ function combine(opt) {
     });
   }
 
-  function getEnv(name) {
+  function getFileUrl(name) {
+    var baseUrl = '', file = '';
     if (browerify) {
       //TODO:browerify support start.
+      baseUrl = fileBase;
+      file = RegTest(name);
+    } else {
+      baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
+      //TODO:wait test in win platform
+//      if (process.platform !== 'darwin') {
+//        baseUrl = process.cwd() + '\\' + opt.baseUrl + '\\';
+//      }
+      file = RegTest(opt.paths[name]);
     }
+    console.log(__filename);
+    console.log(__dirname);
+    console.log(process.cwd());
+    console.log(baseUrl + file);
+    console.log('//////////');
 
-    var baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
-    //TODO:wait test in win platform
-    if (process.platform !== 'darwin') {
-      baseUrl = process.cwd() + '\\' + opt.baseUrl + '\\';
-    }
-    var file = opt.paths[name];
-    var extFile = file;
+    return baseUrl + file;
+  }
+
+  function RegTest(file) {
     if (!(/\.js/gi.test(file))) {
-      extFile = file + '.js';
+      file = file + '.js';
     }
-    return baseUrl + extFile;
+    return file;
   }
 
   function clear() {
@@ -150,6 +163,7 @@ function combine(opt) {
     //clear all parpare for next file.
     clear();
 
+    fileBase = file.base;
     //every file will go into this
     var content = String(file.contents);
     //try to run requrie('a','b',function(){});
