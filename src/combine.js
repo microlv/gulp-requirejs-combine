@@ -9,12 +9,14 @@ var utils = require('./utils');
 
 var arrayTag = '[object Array]';
 var toString = Object.prototype.toString;
+var fileBase = '';
 
 function combine(opt) {
   opt = opt || {};
   var useStrict = opt.useStrict || false;
   var output = opt.output || 'output.js';
   var debug = opt.debug || false;
+  var browerify = opt.browerify || false;
   var defineList = [];
   var requireList = [];
   var evalName = '';
@@ -55,7 +57,7 @@ function combine(opt) {
 
   function loadFiles(name) {
     var data, content, item;
-    var filepath = path.resolve(getEnv() + mapConfig(name));
+    var filepath = path.resolve(getFileUrl(name));
     try {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
@@ -87,13 +89,13 @@ function combine(opt) {
     func = '($$func$$)();$$name$$'
       .replace('$$func$$', f.toString())
       //if not debug ,replace to ''
-      .replace('$$name$$', !debug ? ('\r/** ' + ( evalName || main) + ' **/\r') : '');
+      .replace('$$name$$', debug ? ('\r/** ' + ( evalName || main) + ' **/\r') : '');
 
     if (useStrict) {
       index = func.indexOf('{') + 1;
       start = func.substring(0, index);
       end = func.substring(index, func.length);
-      func = start + '\r\'use strict\';\r' + end;
+      func = start + '\r  \'use strict\';\r' + end;
     }
     if (evalName) {
       item = utils.findItem(evalName, defineList);
@@ -104,15 +106,6 @@ function combine(opt) {
     }
   }
 
-  function mapConfig(name) {
-    var file = opt.paths[name];
-    var re = new RegExp(/\.js/gi);
-    if (re.test(file)) {
-      return file;
-    }
-    return file + '.js';
-  }
-
   function createFile(file) {
     return new gutil.File({
       cwd: __dirname,
@@ -121,12 +114,30 @@ function combine(opt) {
     });
   }
 
-  function getEnv() {
-    var baseUrl = __dirname + '/../' + opt.baseUrl + '/';
-    if (process.platform !== 'darwin') {
-      baseUrl = __dirname + '\\..\\' + opt.baseUrl + '\\'
+  function getFileUrl(name) {
+    var baseUrl = '', file = '';
+    if (browerify) {
+      //TODO:browerify support start.
+      baseUrl = fileBase;
+      file = RegTest(name);
+    } else {
+      baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
+      file = RegTest(opt.paths[name]);
     }
-    return baseUrl;
+    console.log(__filename);
+    console.log(__dirname);
+    console.log(process.cwd());
+    console.log(baseUrl + file);
+    console.log('//////////');
+
+    return baseUrl + file;
+  }
+
+  function RegTest(file) {
+    if (!(/\.js/gi.test(file))) {
+      file = file + '.js';
+    }
+    return file;
   }
 
   function clear() {
@@ -148,6 +159,7 @@ function combine(opt) {
     //clear all parpare for next file.
     clear();
 
+    fileBase = file.base;
     //every file will go into this
     var content = String(file.contents);
     //try to run requrie('a','b',function(){});
@@ -163,7 +175,6 @@ function combine(opt) {
       stringContent += ((item.ef === '' ? item.content : item.ef) + '\r');
     });
 
-    console.log(stringContent);
     file.contents = new Buffer(stringContent);
     cb(null, file);
   }

@@ -47,52 +47,44 @@ combine({
 var gulp = require('gulp');
 var del = require('del');
 var combine = require('gulp-requirejs-combine');
-var config = {
-  baseUrl: 'js/lib',
-  paths: {
-    jquery: 'jquery-1.9.0',
-    react: 'react'
-  }
-};
 
 var paths = {
-  js: ['demo/require.js']
+  js: [
+    'test/base/base1.js',
+    'test/base/base2.js'
+  ],
+  complicatejs: [
+    'test/complicate/require.js'
+  ]
 };
 
 gulp.task('clean', function (cb) {
-    del(['build'], cb);
+  del(['build'], cb);
 });
 
-gulp.task('test:base', function () {
-  return gulp.src('test/base/require.js')
-    .pipe(combine({
-      baseUrl: './test/base',
-      paths: {
-        jsonp: 'jsonp',
-        load: 'load',
-        xhr: 'xhr',
-        nonce: 'var/nonce',
-        rquery: 'var/rquery'
-      }
-    }))
+var baseConfig = {
+  baseUrl: './test/base',
+  paths: {
+    jsonp: 'jsonp',
+    load: 'load',
+    xhr: 'xhr',
+    nonce: 'var/nonce',
+    rquery: 'var/rquery'
+  }
+};
+
+gulp.task('default', function () {
+  return gulp.src(paths.js)
+    .pipe(combine(baseConfig))
     .pipe(gulp.dest('test/base/build'));
 });
 ```
 
 + uglify
 ```js
-gulp.task('default', function () {
+gulp.task('test:uglify', function () {
   return gulp.src(paths.js)
-    .pipe(combine({
-      baseUrl: './test/base',
-      paths: {
-        jsonp: 'jsonp',
-        load: 'load',
-        xhr: 'xhr',
-        nonce: 'var/nonce',
-        rquery: 'var/rquery'
-      }
-    }))
+    .pipe(combine(baseConfig))
     .pipe(uglify())
     .pipe(gulp.dest('test/base/build'));
 });
@@ -101,11 +93,11 @@ gulp.task('default', function () {
 
 ### 3.be careful about config
 
-config is base on your gulpfile path. your need to config it base your gulpfile location.
+config is base on your gulpfile path. your need to config it base on your gulpfile location.
 
 ```js
 var config={
-  baseUrl: './test/base',
+  baseUrl: './test/base',//base on where your gulpfile location.
   paths: {...
   }
 }
@@ -119,7 +111,9 @@ npm install
 ```
 + run demo
 ```js
+gulp
 gulp test:base
+gulp test:complicate
 ```
 
 ## Problem

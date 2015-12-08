@@ -2,17 +2,18 @@
 
 var gulp = require('gulp');
 var del = require('del');
-var combine = require('./combine');
+var combine = require('./src');
 var uglify = require('gulp-uglify');
 
 var paths = {
-  js: [
+  basejs: [
     'test/base/base1.js',
     'test/base/base2.js'
   ],
   complicatejs: [
     'test/complicate/require.js'
-  ]
+  ],
+  browerifyjs: ['test/browerify/browerify.js']
 };
 
 gulp.task('clean', function (cb) {
@@ -29,14 +30,15 @@ var baseConfig = {
     rquery: 'var/rquery'
   }
 };
+
 gulp.task('default', function () {
-  return gulp.src(paths.js)
+  return gulp.src(paths.basejs)
     .pipe(combine(baseConfig))
     .pipe(gulp.dest('test/base/build'));
 });
 
 gulp.task('test:uglify', function () {
-  return gulp.src(paths.js)
+  return gulp.src(paths.basejs)
     .pipe(combine(baseConfig))
     .pipe(uglify())
     .pipe(gulp.dest('test/base/build'));
@@ -59,6 +61,15 @@ gulp.task('test:complicate', function () {
       useStrict: true,
       debug: true
     }))
-    .pipe(uglify())
     .pipe(gulp.dest('test/complicate/build'));
+});
+
+gulp.task('test:browerify', function () {
+  return gulp.src(paths.browerifyjs)
+    .pipe(combine({
+      browerify: true,
+      useStrict: true,
+      debug: true
+    }))
+    .pipe(gulp.dest('test/browerify/build'));
 });
