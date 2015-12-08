@@ -122,10 +122,6 @@ function combine(opt) {
       file = RegTest(name);
     } else {
       baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
-      //TODO:wait test in win platform
-//      if (process.platform !== 'darwin') {
-//        baseUrl = process.cwd() + '\\' + opt.baseUrl + '\\';
-//      }
       file = RegTest(opt.paths[name]);
     }
     console.log(__filename);
