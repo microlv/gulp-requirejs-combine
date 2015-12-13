@@ -22,6 +22,7 @@ function combine(opt) {
   var evalName = '';
   var sort = 1;
   var jsFile = '';
+  var currentFileName = '';//current load file name
 
   var define = function () {
     var i = 0, f = arguments[i];
@@ -160,6 +161,8 @@ function combine(opt) {
     clear();
 
     fileBase = file.base;
+
+    console.log(fileBase);
     //every file will go into this
     var content = String(file.contents);
     //try to run requrie('a','b',function(){});
