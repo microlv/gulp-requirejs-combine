@@ -28,7 +28,8 @@ var baseConfig = {
     xhr: 'xhr',
     nonce: 'var/nonce',
     rquery: 'var/rquery'
-  }
+  },
+  useClosure: false
 };
 
 gulp.task('default', function () {

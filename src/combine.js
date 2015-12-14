@@ -17,6 +17,7 @@ function combine(opt) {
   var output = opt.output || 'output.js';
   var debug = opt.debug || false;
   var browerify = opt.browerify || false;
+  var useClosure = opt.useClosure || false;
   var defineList = [];
   var requireList = [];
   var evalName = '';
@@ -88,6 +89,7 @@ function combine(opt) {
     var index, start, end, item;
 
     func = '($$func$$)();$$name$$'
+      //(useClosure ? '($$func$$)();$$name$$' : '$$func$$; $$name$$')
       .replace('$$func$$', f.toString())
       //if not debug ,replace to ''
       .replace('$$name$$', debug ? ('\r/** ' + ( evalName || main) + ' **/\r') : '');
