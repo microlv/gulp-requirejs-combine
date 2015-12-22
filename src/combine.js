@@ -84,7 +84,7 @@ function combine(opt) {
     if (typeof f !== 'function')return;
 
     //default func
-    var func = 'function(){}', main = 'mainRequire';
+    var func = 'function(){}', main = 'main function';
     var index, start, end, item;
 
     func = '($$func$$)();$$name$$'
@@ -155,7 +155,7 @@ function combine(opt) {
     }
 
     if (file.isStream()) {
-      return cb(createError(file, 'Streaming not supported'));
+      return cb(null, 'Streaming not supported');
     }
     //clear all parpare for next file.
     clear();
