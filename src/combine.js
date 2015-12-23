@@ -22,7 +22,7 @@ function combine(opt) {
   var evalName = '';
   var sort = 1;
   var jsFile = '';
-  var currentFileName = '';//current load file name
+  var runFolder = '';//current the location of file
 
   /**
    * define for when gulp run, it need to find this define function
@@ -43,6 +43,9 @@ function combine(opt) {
       //save self first.
       closureReplace(arguments[++i]);
       _.forEach(f, function (name) {
+        runFolder = name;
+        console.log(runFolder);
+        console.log('*****************');
         loadFiles(name);
       });
     }
@@ -56,6 +59,9 @@ function combine(opt) {
 
     _.forEach(arr, function (name) {
       sort = 1;
+      runFolder = name;
+      console.log(runFolder);
+      console.log('22*****************');
       loadFiles(name);
     });
     evalName = '';
@@ -126,21 +132,19 @@ function combine(opt) {
     if (browerify) {
       //TODO:browerify support start.
       baseUrl = fileBase;
-      file = RegTest(name);
+      file = regTest(name);
     } else {
       baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
-      file = RegTest(opt.paths[name]);
+      file = regTest(opt.paths[name]);
     }
-    console.log(__filename);
-    console.log(__dirname);
-    console.log(process.cwd());
-    console.log(baseUrl + file);
-    console.log('//////////');
+    // console.log(fileBase);
+    // console.log(baseUrl + file);
+    // console.log('****************************');
 
     return baseUrl + file;
   }
 
-  function RegTest(file) {
+  function regTest(file) {
     if (!(/\.js/gi.test(file))) {
       file = file + '.js';
     }
@@ -148,8 +152,8 @@ function combine(opt) {
   }
 
   function clear() {
-    defineList = [];
-    requireList = [];
+    defineList.length = 0;
+    requireList.length = 0;
     evalName = '';
     sort = 1;
     jsFile = createFile(output);
@@ -168,7 +172,6 @@ function combine(opt) {
 
     fileBase = file.base;
 
-    console.log(fileBase);
     //every file will go into this
     var content = String(file.contents);
     //try to run requrie('a','b',function(){});
