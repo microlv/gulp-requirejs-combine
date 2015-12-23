@@ -43,9 +43,6 @@ function combine(opt) {
       //save self first.
       closureReplace(arguments[++i]);
       _.forEach(f, function (name) {
-        runFolder = name;
-        console.log(runFolder);
-        console.log('*****************');
         loadFiles(name);
       });
     }
@@ -59,9 +56,7 @@ function combine(opt) {
 
     _.forEach(arr, function (name) {
       sort = 1;
-      runFolder = name;
-      console.log(runFolder);
-      console.log('22*****************');
+      runFolder = '.';
       loadFiles(name);
     });
     evalName = '';
@@ -69,11 +64,12 @@ function combine(opt) {
   };
 
   function loadFiles(name) {
-    var data, content, item;
-    var filepath = path.resolve(getFileUrl(name));
-    try {
-      data = fs.readFileSync(filepath, 'utf-8');
-      content = String(data);
+    utils.trycatch(function () {
+      var item;
+      var filepath = path.resolve(getFileUrl(name));
+      var data = fs.readFileSync(filepath, 'utf-8');
+      var content = String(data);
+      
       if (!utils.exist(name, defineList)) {
         defineList.push({ name: name, content: content, ef: '' });
         requireList.push({ name: name, sort: sort++ });
@@ -86,10 +82,7 @@ function combine(opt) {
       }
       evalName = name;
       eval(content);
-    }
-    catch (e) {
-      console.log(e);
-    }
+    }, function (e) { console.log(e); });
   }
 
   function closureReplace(f) {
@@ -131,15 +124,20 @@ function combine(opt) {
     var baseUrl = '', file = '';
     if (browerify) {
       //TODO:browerify support start.
-      baseUrl = fileBase;
+      if (runFolder === '.') {//this means process is in require
+        baseUrl = fileBase;
+        runFolder = name;
+      } else {
+        baseUrl = fileBase + runFolder + '/../';
+      }
+
       file = regTest(name);
     } else {
       baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
       file = regTest(opt.paths[name]);
     }
-    // console.log(fileBase);
-    // console.log(baseUrl + file);
-    // console.log('****************************');
+    console.log(baseUrl + file);
+    console.log('>>>>>>****************************');
 
     return baseUrl + file;
   }
