@@ -38,6 +38,7 @@
   "devDependencies": {
     "del": "^2.1.0",
     "gulp": "^3.9.0",
+    "gulp-obfuscate": "^0.2.9",
     "gulp-uglify": "^1.5.1"
   }
 }

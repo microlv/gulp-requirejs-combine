@@ -69,7 +69,7 @@ function combine(opt) {
       var filepath = path.resolve(getFileUrl(name));
       var data = fs.readFileSync(filepath, 'utf-8');
       var content = String(data);
-      
+
       if (!utils.exist(name, defineList)) {
         defineList.push({ name: name, content: content, ef: '' });
         requireList.push({ name: name, sort: sort++ });
@@ -126,10 +126,10 @@ function combine(opt) {
       //TODO:browerify support start.
       if (runFolder === '.') {//this means process is in require
         baseUrl = fileBase;
-        runFolder = name;
       } else {
-        baseUrl = fileBase + runFolder + '/../';
+        baseUrl = fileBase + runFolder ;
       }
+      runFolder = name;
 
       file = regTest(name);
     } else {

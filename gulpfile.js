@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var del = require('del');
 var combine = require('./src');
 var uglify = require('gulp-uglify');
+var obfuscate = require('gulp-obfuscate');
 
 var paths = {
   basejs: [
