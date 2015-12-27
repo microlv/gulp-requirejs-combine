@@ -25,6 +25,9 @@ function combine(opt) {
   var jsFile = '';
   var currentFileName = '';//current load file name
 
+  /**
+   * define for when gulp run, it need to find this define function
+   */
   var define = function () {
     var i = 0, f = arguments[i];
     //if first argument is name, like define('name',[],function(){});
@@ -46,6 +49,9 @@ function combine(opt) {
     }
   };
 
+  /**
+   * require for when gulp run, it need to find this require function
+   */
   var require = function (arr, func) {
     if (toString.call(arr) !== arrayTag) return;
 
@@ -64,8 +70,8 @@ function combine(opt) {
       data = fs.readFileSync(filepath, 'utf-8');
       content = String(data);
       if (!utils.exist(name, defineList)) {
-        defineList.push({name: name, content: content, ef: ''});
-        requireList.push({name: name, sort: sort++});
+        defineList.push({ name: name, content: content, ef: '' });
+        requireList.push({ name: name, sort: sort++ });
       } else {
         //if item is exist, then update it 's sort
         item = utils.findItem(name, requireList);
@@ -82,17 +88,17 @@ function combine(opt) {
   }
 
   function closureReplace(f) {
-    if (typeof f !== 'function')return;
+    if (typeof f !== 'function') return;
 
     //default func
-    var func = 'function(){}', main = 'mainRequire';
+    var func = 'function(){}', main = 'main function';
     var index, start, end, item;
 
     func = '($$func$$)();$$name$$'
       //(useClosure ? '($$func$$)();$$name$$' : '$$func$$; $$name$$')
       .replace('$$func$$', f.toString())
-      //if not debug ,replace to ''
-      .replace('$$name$$', debug ? ('\r/** ' + ( evalName || main) + ' **/\r') : '');
+    //if not debug ,replace to ''
+      .replace('$$name$$', debug ? ('\r/** ' + (evalName || main) + ' **/\r') : '');
 
     if (useStrict) {
       index = func.indexOf('{') + 1;
@@ -104,8 +110,8 @@ function combine(opt) {
       item = utils.findItem(evalName, defineList);
       item.ef = func;
     } else {
-      defineList.push({name: main, content: '', ef: func});
-      requireList.push({name: main, sort: 0});
+      defineList.push({ name: main, content: '', ef: func });
+      requireList.push({ name: main, sort: 0 });
     }
   }
 
@@ -152,7 +158,7 @@ function combine(opt) {
     }
 
     if (file.isStream()) {
-      return cb(createError(file, 'Streaming not supported'));
+      return cb(null, 'Streaming not supported');
     }
     //clear all parpare for next file.
     clear();
