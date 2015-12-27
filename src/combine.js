@@ -127,11 +127,6 @@ function combine(opt) {
       baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
       file = RegTest(opt.paths[name]);
     }
-    console.log(__filename);
-    console.log(__dirname);
-    console.log(process.cwd());
-    console.log(baseUrl + file);
-    console.log('//////////');
 
     return baseUrl + file;
   }
