@@ -17,13 +17,12 @@ function combine(opt) {
   var output = opt.output || 'output.js';
   var debug = opt.debug || false;
   var browerify = opt.browerify || false;
-  var useClosure = opt.useClosure || false;
   var defineList = [];
   var requireList = [];
   var evalName = '';
   var sort = 1;
   var jsFile = '';
-  var currentFileName = '';//current load file name
+  var runFolder = '';//current the location of file
 
   /**
    * define for when gulp run, it need to find this define function
@@ -57,6 +56,7 @@ function combine(opt) {
 
     _.forEach(arr, function (name) {
       sort = 1;
+      runFolder = '.';
       loadFiles(name);
     });
     evalName = '';
@@ -64,11 +64,12 @@ function combine(opt) {
   };
 
   function loadFiles(name) {
-    var data, content, item;
-    var filepath = path.resolve(getFileUrl(name));
-    try {
-      data = fs.readFileSync(filepath, 'utf-8');
-      content = String(data);
+    utils.trycatch(function () {
+      var item;
+      var filepath = path.resolve(getFileUrl(name));
+      var data = fs.readFileSync(filepath, 'utf-8');
+      var content = String(data);
+
       if (!utils.exist(name, defineList)) {
         defineList.push({ name: name, content: content, ef: '' });
         requireList.push({ name: name, sort: sort++ });
@@ -81,10 +82,7 @@ function combine(opt) {
       }
       evalName = name;
       eval(content);
-    }
-    catch (e) {
-      console.log(e);
-    }
+    }, function (e) { console.log(e); });
   }
 
   function closureReplace(f) {
@@ -95,7 +93,6 @@ function combine(opt) {
     var index, start, end, item;
 
     func = '($$func$$)();$$name$$'
-      //(useClosure ? '($$func$$)();$$name$$' : '$$func$$; $$name$$')
       .replace('$$func$$', f.toString())
     //if not debug ,replace to ''
       .replace('$$name$$', debug ? ('\r/** ' + (evalName || main) + ' **/\r') : '');
@@ -127,17 +124,25 @@ function combine(opt) {
     var baseUrl = '', file = '';
     if (browerify) {
       //TODO:browerify support start.
-      baseUrl = fileBase;
-      file = RegTest(name);
+      if (runFolder === '.') {//this means process is in require
+        baseUrl = fileBase;
+      } else {
+        baseUrl = fileBase + runFolder ;
+      }
+      runFolder = name;
+
+      file = regTest(name);
     } else {
       baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
-      file = RegTest(opt.paths[name]);
+      file = regTest(opt.paths[name]);
     }
+    console.log(baseUrl + file);
+    console.log('>>>>>>****************************');
 
     return baseUrl + file;
   }
 
-  function RegTest(file) {
+  function regTest(file) {
     if (!(/\.js/gi.test(file))) {
       file = file + '.js';
     }
@@ -145,8 +150,8 @@ function combine(opt) {
   }
 
   function clear() {
-    defineList = [];
-    requireList = [];
+    defineList.length = 0;
+    requireList.length = 0;
     evalName = '';
     sort = 1;
     jsFile = createFile(output);
@@ -165,7 +170,6 @@ function combine(opt) {
 
     fileBase = file.base;
 
-    console.log(fileBase);
     //every file will go into this
     var content = String(file.contents);
     //try to run requrie('a','b',function(){});

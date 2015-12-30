@@ -22,13 +22,9 @@ function exist(name, arr) {
   return !!findItem(name, arr);
 }
 
-function outPutCountIndex() {
-  var res = count;
-  ++count;
-  console.log(res);
-  return res;
-}
-
+/**
+ * try catch
+ */
 function trycatch(exec, cb) {
   try {
     exec();
@@ -41,6 +37,5 @@ function trycatch(exec, cb) {
 module.exports = {
   findItem: findItem,
   exist: exist,
-  outPutCountIndex: outPutCountIndex,
   trycatch: trycatch
 };

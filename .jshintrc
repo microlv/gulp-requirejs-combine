@@ -1,0 +1,14 @@
+{
+  "predef": [
+    "require",
+    "console",
+    "__dirname",
+    "__filename",
+    "process",
+    "module",
+    "Buffer",
+    "eval",
+    "require",
+    "define"
+  ]
+}
