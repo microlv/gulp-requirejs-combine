@@ -125,23 +125,23 @@ function combine(opt) {
 
     if (browerify) {
       //TODO:browerify support start.
-      console.log(name);
-      if (runFolder === '.') {//this means process is in require
-        baseUrl = fileBase;
-        runFolder = name.substring(name.lastIndexOf('/') + 1, name.length);
-      } else {
-        runFolder = name.substring(name.lastIndexOf('/') + 1, name.length);
-        console.log(runFolder);
-        baseUrl = fileBase + '/' + runFolder;
-      }
+      // console.log(name);
+      // if (runFolder === '.') {//this means process is in require
+      //   baseUrl = fileBase;
+      //   runFolder = name.substring(name.lastIndexOf('/') + 1, name.length);
+      // } else {
+      //   runFolder = name.substring(name.lastIndexOf('/') + 1, name.length);
+      //   console.log(runFolder);
+      //   baseUrl = fileBase + '/' + runFolder;
+      // }
 
-      file = regTest(name);
+      // file = regTest(name);
     } else {
       baseUrl = process.cwd() + '/' + opt.baseUrl + '/';
       file = regTest(opt.paths[name]);
     }
-    console.log(baseUrl + file);
-    console.log('>>>>>>****************************');
+    // console.log(baseUrl + file);
+    // console.log('>>>>>>****************************');
 
     return baseUrl + file;
   }
