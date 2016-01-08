@@ -82,7 +82,7 @@ function combine(opt) {
       }
       evalName = name;
       eval(content);
-    }, function (e) { console.log(e); });
+    }, function (e) { console.error(e); });
   }
 
   function closureReplace(f) {
@@ -122,14 +122,18 @@ function combine(opt) {
 
   function getFileUrl(name) {
     var baseUrl = '', file = '';
+
     if (browerify) {
       //TODO:browerify support start.
+      console.log(name);
       if (runFolder === '.') {//this means process is in require
         baseUrl = fileBase;
+        runFolder = name.substring(name.lastIndexOf('/') + 1, name.length);
       } else {
-        baseUrl = fileBase + runFolder ;
+        runFolder = name.substring(name.lastIndexOf('/') + 1, name.length);
+        console.log(runFolder);
+        baseUrl = fileBase + '/' + runFolder;
       }
-      runFolder = name;
 
       file = regTest(name);
     } else {
