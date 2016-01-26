@@ -1,9 +1,12 @@
 # gulp-requirejs-combine
 combine requirejs file into one file. purpose is reduce http request.
 
-currently only support the file has one require or define function.
+# Next Plan
+- [x] according to config file, merge all dependencies file into one file.
+- [ ] according to require file(write with require('./a','./b')), merge all dependencies file into one file.
+- [ ] support require/define write in function(){ require('./x')}, currently only support the file has one require or define function.
 
-## Install
+# Install
 
 ```js
 npm install --save-dev gulp-requirejs-combine
@@ -26,7 +29,7 @@ require.config({
   }
 });
 ```
-
+move it into gulp file config.
 ```js
 combine({
   baseUrl: './test/base',
@@ -42,7 +45,7 @@ combine({
 
 ### 2.use in gulp
 
-+ base use
+> base use
 
 ```js
 var gulp = require('gulp');
@@ -107,7 +110,7 @@ output will like this:
 
 ```
 
-+ uglify
+> uglify
 
 ```js
 gulp.task('test:uglify', function () {
@@ -122,7 +125,7 @@ gulp.task('test:uglify', function () {
 !function(o,s){"use strict";console.log("parseHTML")}(),function(o){"use strict";console.log("ajax")}(),function(o){"use strict";console.log("alias")}(),function(o,s){"use strict";console.log("xhr")}(),function(){"use strict";console.log("require run!")}();
 ```
 
-+ more demo please see gulpfile
+> more demo please see gulpfile
 
 ### 3.be careful about config
 
@@ -138,14 +141,14 @@ var config={
 
 ### 4.run demo
 
-+ install dependencies
+> install dependencies
 
 ```js
 npm install gulp -g
-npm install 
+npm install
 ```
 
-+ run demo
+> run demo
 
 ```js
 gulp
@@ -153,9 +156,8 @@ gulp test:base
 gulp test:complicate
 ```
 
-## Problem
+# Problem
 
 You are welcome to contribute
 
-Any problem you can task issue or contact me :andy.lv@live.com
-
+Any problem you can task issue or contact me: andy.lv@live.com
